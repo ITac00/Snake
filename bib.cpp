@@ -85,8 +85,8 @@ Game::snake::Wydluz(int x, int y){
     this->Porusz();
     for(int i=0;i<l-1;i++)
         tn[i].setwsp(tab[i].getx(),tab[i].gety());
+    delete [] tab;
     this->tab=tn;
-    delete [] tn;
 }
 
 Game::pilka::pilka(int x, int y, snake *s){
