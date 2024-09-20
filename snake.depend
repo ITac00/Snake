@@ -16,3 +16,22 @@
 	<cstdlib>
 	<ctime>
 
+1726831479 source:c:\users\tobia\onedrive\pulpit\projekty\snake\bib.cpp
+	<iostream>
+	"bib.h"
+	<exception>
+	<chrono>
+	<thread>
+	<windows.h>
+	<conio.h>
+	<cstdlib>
+	<ctime>
+	<fstream>
+	<string>
+
+1726830886 c:\users\tobia\onedrive\pulpit\projekty\snake\bib.h
+
+1726685921 source:c:\users\tobia\onedrive\pulpit\projekty\snake\program.cpp
+	<iostream>
+	"bib.h"
+

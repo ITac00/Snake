@@ -2,7 +2,7 @@
 #define biblioteka
 class Game{
 
-    int x,y;
+    int x,y,r;
 
     class snake{
         int l;
@@ -21,12 +21,12 @@ class Game{
              snake(int x, int y);
              bool Sprawdz(int i, int j);
              ~snake();
-             Kolizja(int x, int y);
-             Porusz();
-             ZmianaKierunku(char z);
+             bool Kolizja(int x, int y);
+             void Porusz();
+             void ZmianaKierunku(char z);
              int getl(){return l;}
              bool Compare(int x, int y, int i);
-             Wydluz(int x, int y);
+             void Wydluz(int x, int y);
     };
     class pilka{
                 int x,y;
@@ -35,7 +35,7 @@ class Game{
                 pilka(int x, int y, snake *s);
                 int getx(){return x;}
                 int gety(){return y;}
-                Wyznacz(int x, int y);
+                void Wyznacz(int x, int y);
                 bool czyWaz();
         };
 
@@ -43,10 +43,11 @@ class Game{
     snake *s;
 
     public:
-    czyZjedzone();
+    void czyZjedzone();
     Game(int x, int y);
     void Start();
     void Mapa();
+    void Restart();
     ~Game();
 };
 #endif
