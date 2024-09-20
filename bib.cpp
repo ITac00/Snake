@@ -7,6 +7,8 @@
 #include <conio.h>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
+#include <string>
 using namespace std;
 
 Game::Game(int x,int y):x(x),y(y){
@@ -14,6 +16,7 @@ Game::Game(int x,int y):x(x),y(y){
         throw logic_error("Blad");
     s=new snake(x,y);
     p=new pilka(x,y,s);
+    r=0;
     Mapa();
 }
 Game::~Game(){
@@ -25,6 +28,7 @@ void Game::Mapa(){
     HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
     COORD position = {0,0};
     SetConsoleCursorPosition(hStdout,position);
+
 
     for(int i=0; i<y; i++){
         for(int j=0; j<x; j++){
@@ -41,7 +45,11 @@ void Game::Mapa(){
         }
         cout<<endl;
     }
-    cout<<"\n\nPunkty: "<<s->getl()-2;
+    int pkt=s->getl()-2;
+    cout<<"\n\nPunkty: "<<pkt;
+    if(pkt>=r)
+        r=pkt;
+    cout<<"\nRekord: "<<this->r;
 }
 void Game::Start(){
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -49,6 +57,16 @@ void Game::Start(){
     GetConsoleCursorInfo(out, &cursorInfo);
     cursorInfo.bVisible=false;
     SetConsoleCursorInfo(out,&cursorInfo);
+
+    char choice;
+    do{
+    ifstream plik("rekord.txt");
+    if(plik.is_open()){
+        string firstLine;
+        if(getline(plik, firstLine))
+            this->r=stoi(firstLine);
+        plik.close();
+    }
 
     while(!s->Kolizja(x,y)){
         Mapa();
@@ -67,10 +85,31 @@ void Game::Start(){
         cout<<"\n\nVICTORY\n\n";
     else
         cout<<"\n\nGAME OVER\n\n";
-    this_thread::sleep_for(std::chrono::milliseconds(1200));
+
+    ofstream zapisR("rekord.txt");
+    zapisR<<r;
+    zapisR.close();
+
+    this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+    system("cls");
+    cout<<"Punkty: "<<s->getl()-2<<"\nRekord: "<<r;
+    cout<<"\n\nZagraj ponownie -> z\nZakoncz -> inny przycik\n\n";
+    choice=_getch();
+    if(choice=='z')
+        Restart();
+    }while(choice=='z');
+}
+void Game::Restart(){
+    system("cls");
+    delete s;
+    delete p;
+    s=new snake(x,y);
+    p=new pilka(x,y,s);
+    Mapa();
 }
 
-Game::czyZjedzone(){
+void Game::czyZjedzone(){
     if(s->Compare(p->getx(),p->gety(),0)){
         s->Wydluz(p->getx(),p->gety());
         p->Wyznacz(x,y);
@@ -78,7 +117,7 @@ Game::czyZjedzone(){
     else
         s->Porusz();
 }
-Game::snake::Wydluz(int x, int y){
+void Game::snake::Wydluz(int x, int y){
     l++;
     block *tn=new block[l];
     tn[l-1].setwsp(tab[l-2].getx(),tab[l-2].gety());
@@ -93,7 +132,7 @@ Game::pilka::pilka(int x, int y, snake *s){
     this->s=s;
     Wyznacz(x,y);
 }
-Game::pilka::Wyznacz(int x, int y){
+void Game::pilka::Wyznacz(int x, int y){
     srand(time(0));
     do{
     this->x=rand()%(x-2)+1;
@@ -107,7 +146,7 @@ bool Game::pilka::czyWaz(){
                     return false;
                 }
 
-Game::snake::Kolizja(int x, int y){
+bool Game::snake::Kolizja(int x, int y){
                  if(tab[0].getx()==0||tab[0].getx()==x-1||tab[0].gety()==0||tab[0].gety()==y-1)
                     return true;
                  for(int i=1;i<l;i++)
@@ -116,7 +155,7 @@ Game::snake::Kolizja(int x, int y){
                  return false;
              }
 
-Game::snake::ZmianaKierunku(char z){
+void Game::snake::ZmianaKierunku(char z){
     if(z=='w'||z=='s'||z=='d'||z=='a'){
             switch(kierunek){
                 case 'w':
@@ -137,7 +176,7 @@ Game::snake::ZmianaKierunku(char z){
     }
 }
 
-Game::snake::Porusz(){
+void Game::snake::Porusz(){
                 for(int i=l-1;i>0;i--)
                             tab[i].setwsp(tab[i-1].getx(),tab[i-1].gety());
                  switch(kierunek){
